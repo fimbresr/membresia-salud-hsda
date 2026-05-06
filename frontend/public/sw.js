@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hsda-card-v1';
+const CACHE_NAME = 'hsda-card-v2';
 
 const ASSETS = [
   '/membresia-salud-hsda/',
@@ -8,6 +8,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
@@ -17,14 +18,15 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return cached || fetch(event.request).then((response) => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, response.clone());
-          return response;
+    fetch(event.request)
+      .then((response) => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, clone);
         });
-      });
-    })
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
 

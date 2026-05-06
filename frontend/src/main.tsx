@@ -6,7 +6,7 @@ import App from './App.tsx'
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/membresia-salud-hsda/sw.js');
+    navigator.serviceWorker.register('/membresia-salud-hsda/sw.js', { updateViaCache: 'none' });
   });
 }
 
