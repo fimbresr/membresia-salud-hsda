@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: 'Avenir Black';
-  src: url('./assets/fonts/Avenir Black.ttf') format('truetype');
+  src: url('../assets/fonts/Avenir Black.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: 'Avenir Medium';
-  src: url('./assets/fonts/avenir-medium.ttf') format('truetype');
+  src: url('../assets/fonts/avenir-medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -20,20 +20,46 @@
 
 @font-face {
   font-family: 'Avenir Light';
-  src: url('./assets/fonts/avenir-light.ttf') format('truetype');
+  src: url('../assets/fonts/avenir-light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 
 :root {
+  color: #11284d;
   font-family: 'Avenir Light', sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(35, 97, 183, 0.12), transparent 26%),
+    linear-gradient(180deg, #f7faff 0%, #eff5ff 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, .font-title {
+h1,
+h2,
+h3,
+.font-title {
   font-family: 'Avenir Black', sans-serif;
 }
 
 .font-medium {
   font-family: 'Avenir Medium', sans-serif;
+}
+
+body {
+  color: #11284d;
+  font-family: 'Avenir Light', sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(35, 97, 183, 0.12), transparent 26%),
+    linear-gradient(180deg, #f7faff 0%, #eff5ff 100%);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }

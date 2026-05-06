@@ -1,78 +1,147 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { QrCode, ShieldCheck } from 'lucide-react';
+import logo from '../../assets/logo.png';
 
 interface DigitalCardProps {
   userName: string;
   memberId: string;
-  plan: 'Básico' | 'Plus' | 'Premium';
-  expiryDate: string;
-  status: 'Activa' | 'Vencida' | 'Suspendida';
+  status: 'Activa' | 'Inactiva';
 }
 
 export const DigitalCard: React.FC<DigitalCardProps> = ({
   userName,
   memberId,
-  plan,
-  expiryDate,
-  status
+  status,
 }) => {
+  const isActive = status === 'Activa';
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative w-full max-w-md h-64 mx-auto rounded-3xl overflow-hidden shadow-2xl bg-hospital-primary text-white p-6 flex flex-col justify-between"
+      transition={{ duration: 0.45, ease: 'easeOut' }}
       style={{
-        background: 'linear-gradient(135deg, #004a8f 0%, #00a3e0 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        width: '100%',
+        maxWidth: 356,
+        aspectRatio: '1.618 / 1',
+        margin: '0 auto',
+        borderRadius: 17,
+        color: '#ffffff',
+        background: 'linear-gradient(145deg, #16488c 0%, #255eaa 55%, #2f71cf 100%)',
+        boxShadow: '0 18px 30px rgba(26, 63, 124, 0.24), 0 4px 10px rgba(10, 33, 72, 0.10)',
       }}
     >
-      {/* Glassmorphism Overlay */}
-      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm pointer-events-none" />
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'radial-gradient(circle at top right, rgba(255,255,255,0.18), transparent 28%), radial-gradient(circle at bottom left, rgba(255,255,255,0.10), transparent 30%)',
+          pointerEvents: 'none',
+        }}
+      />
 
-      {/* Header */}
-      <div className="relative z-10 flex justify-between items-start">
-        <div className="flex items-center gap-2">
-          <div className="bg-white p-1 rounded-lg">
-            <img src="/logo.png" alt="HSDA Logo" className="w-8 h-8 object-contain" />
-          </div>
-          <span className="font-avenirMedium text-sm opacity-90">Hospital San Diego de Alcalá</span>
-        </div>
-        <div className="flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full text-xs font-avenirMedium backdrop-blur-md">
-          <ShieldCheck size={12} />
+      <img
+        src={logo}
+        alt="Hospital San Diego de Alcalá"
+        style={{
+          position: 'absolute',
+          top: '-13%',
+          left: '2.5%',
+          width: '42%',
+          height: 'auto',
+          display: 'block',
+          objectFit: 'contain',
+        }}
+      />
+
+      <div
+        style={{
+          position: 'absolute',
+          top: '12%',
+          right: '6%',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 5,
+          padding: '6px 10px',
+          borderRadius: 7,
+          background: isActive ? 'rgba(255,255,255,0.20)' : 'rgba(155, 28, 28, 0.22)',
+          border: isActive ? '1px solid rgba(255,255,255,0.16)' : '1px solid rgba(255,255,255,0.14)',
+          backdropFilter: 'blur(10px)',
+          color: '#ffffff',
+        }}
+      >
+        <ShieldCheck size={11} />
+        <span
+          style={{
+            fontSize: 10,
+            fontFamily: '"Avenir Medium", sans-serif',
+          }}
+        >
           {status}
-        </div>
+        </span>
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 flex flex-col gap-4">
-        <div className="flex justify-between items-end">
-          <div className="flex flex-col">
-            <p className="text-xs opacity-70 font-avenirLight uppercase tracking-wider">Titular de la Membresía</p>
-            <h2 className="text-2xl font-avenirBlack">{userName}</h2>
-          </div>
-          <div className="text-right">
-            <p className="text-xs opacity-70 font-avenirLight uppercase tracking-wider">Plan</p>
-            <p className="text-lg font-avenirMedium">{plan}</p>
-          </div>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <div className="flex flex-col">
-            <p className="text-xs opacity-70 font-avenirLight uppercase tracking-wider">ID Miembro</p>
-            <p className="font-avenirMedium text-sm">{memberId}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs opacity-70 font-avenirLight uppercase tracking-wider">Vence</p>
-            <p className="font-avenirMedium text-sm">{expiryDate}</p>
-          </div>
-        </div>
+      <div
+        style={{
+          position: 'absolute',
+          left: '6%',
+          top: '58%',
+          right: '38%',
+        }}
+      >
+        <p
+          style={{
+            margin: 0,
+            fontSize: 11,
+            color: 'rgba(255,255,255,0.86)',
+            fontFamily: '"Avenir Medium", sans-serif',
+          }}
+        >
+          Membresía Plus
+        </p>
+        <h2
+          style={{
+            margin: '8px 0 0',
+            color: '#ffffff',
+            fontSize: 15,
+            lineHeight: 1.15,
+          }}
+        >
+          {userName}
+        </h2>
+        <p
+          style={{
+            margin: '8px 0 0',
+            fontSize: 11,
+            lineHeight: 1.3,
+            color: 'rgba(255,255,255,0.82)',
+            fontFamily: '"Avenir Medium", sans-serif',
+          }}
+        >
+          {memberId}
+        </p>
       </div>
 
-      {/* Footer QR Section */}
-      <div className="relative z-10 flex justify-center mt-4">
-        <div className="bg-white p-2 rounded-xl shadow-inner">
-          <QrCode size={64} className="text-hospital-primary" />
-        </div>
+      <div
+        style={{
+          position: 'absolute',
+          right: '6%',
+          bottom: '9%',
+          width: '28%',
+          aspectRatio: '1 / 1',
+          borderRadius: 11,
+          background: '#ffffff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.65)',
+        }}
+      >
+        <QrCode size={74} color="#1f57a8" strokeWidth={1.8} />
       </div>
     </motion.div>
   );

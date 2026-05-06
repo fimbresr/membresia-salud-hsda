@@ -13,7 +13,7 @@ export default {
       },
       colors: {
         hospital: {
-          primary: '#004a8f', // Azul corporativo estimado, ajustable tras analizar logo.png
+          primary: '#004a8f',
           secondary: '#00a3e0',
           accent: '#e31b23',
           background: '#f8fafc',
