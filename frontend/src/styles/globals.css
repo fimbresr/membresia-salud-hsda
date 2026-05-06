@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Avenir Black';
+  src: url('./assets/fonts/Avenir Black.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Avenir Medium';
+  src: url('./assets/fonts/avenir-medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Avenir Light';
+  src: url('./assets/fonts/avenir-light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  font-family: 'Avenir Light', sans-serif;
+}
+
+h1, h2, h3, .font-title {
+  font-family: 'Avenir Black', sans-serif;
+}
+
+.font-medium {
+  font-family: 'Avenir Medium', sans-serif;
+}
