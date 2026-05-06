@@ -1,8 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { QrCode, ShieldCheck, User } from 'lucide-react';
+import { QrCode, ShieldCheck } from 'lucide-react';
 
 interface DigitalCardProps {
+  userName: string;
+  memberId: string;
+  plan: 'Básico' | 'Plus' | 'Premium';
+  expiryDate: string;
+  status: 'Activa' | 'Vencida' | 'Suspendida';
+}
 
 export const DigitalCard: React.FC<DigitalCardProps> = ({
   userName,
@@ -40,7 +46,7 @@ export const DigitalCard: React.FC<DigitalCardProps> = ({
       {/* Main Content */}
       <div className="relative z-10 flex flex-col gap-4">
         <div className="flex justify-between items-end">
-          <div>
+          <div className="flex flex-col">
             <p className="text-xs opacity-70 font-avenirLight uppercase tracking-wider">Titular de la Membresía</p>
             <h2 className="text-2xl font-avenirBlack">{userName}</h2>
           </div>
@@ -51,11 +57,11 @@ export const DigitalCard: React.FC<DigitalCardProps> = ({
         </div>
 
         <div className="flex justify-between items-center">
-          <div>
+          <div className="flex flex-col">
             <p className="text-xs opacity-70 font-avenirLight uppercase tracking-wider">ID Miembro</p>
             <p className="font-avenirMedium text-sm">{memberId}</p>
           </div>
-          <div>
+          <div className="text-right">
             <p className="text-xs opacity-70 font-avenirLight uppercase tracking-wider">Vence</p>
             <p className="font-avenirMedium text-sm">{expiryDate}</p>
           </div>
