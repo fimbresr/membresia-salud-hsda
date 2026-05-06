@@ -9,6 +9,7 @@ import {
   Calendar,
   FileText,
 } from 'lucide-react';
+import { useSwipeBack } from '../hooks/useSwipeBack';
 
 type PurchaseStatus = 'Completado' | 'Pendiente' | 'Reembolsado';
 
@@ -37,6 +38,7 @@ const filters = ['Todos', 'Completados', 'Pendientes'] as const;
 const PurchasesScreen: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<typeof filters[number]>('Todos');
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const swipeHandlers = useSwipeBack({ onSwipeBack: () => setSelectedIndex(null) });
 
   const filteredPurchases = activeFilter === 'Todos'
     ? purchases
@@ -47,7 +49,7 @@ const PurchasesScreen: React.FC = () => {
   if (selectedIndex !== null) {
     const purchase = filteredPurchases[selectedIndex];
     return (
-      <>
+      <div {...swipeHandlers}>
         <button
           onClick={() => setSelectedIndex(null)}
           style={{ display: 'flex', alignItems: 'center', gap: 6, border: 0, background: 'transparent', padding: 0, cursor: 'pointer', color: '#14346e' }}
@@ -83,7 +85,7 @@ const PurchasesScreen: React.FC = () => {
         </div>
 
         <p style={{ margin: '18px 0 0', fontSize: 14, lineHeight: 1.6, color: '#1d3158' }}>{purchase.fullDesc}</p>
-      </>
+      </div>
     );
   }
 

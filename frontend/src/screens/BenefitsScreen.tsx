@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   CheckCircle,
 } from 'lucide-react';
+import { useSwipeBack } from '../hooks/useSwipeBack';
 
 const allBenefits = [
   {
@@ -58,11 +59,12 @@ const allBenefits = [
 
 const BenefitsScreen: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const swipeHandlers = useSwipeBack({ onSwipeBack: () => setSelectedIndex(null) });
 
   if (selectedIndex !== null) {
     const benefit = allBenefits[selectedIndex];
     return (
-      <>
+      <div {...swipeHandlers}>
         <button
           onClick={() => setSelectedIndex(null)}
           style={{ display: 'flex', alignItems: 'center', gap: 6, border: 0, background: 'transparent', padding: 0, cursor: 'pointer', color: '#14346e' }}
@@ -90,7 +92,7 @@ const BenefitsScreen: React.FC = () => {
             </div>
           ))}
         </div>
-      </>
+      </div>
     );
   }
 

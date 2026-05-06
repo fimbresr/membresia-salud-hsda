@@ -7,6 +7,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { DigitalCard } from '../components/membership/DigitalCard';
+import { useSwipeBack } from '../hooks/useSwipeBack';
 
 const benefitItems = [
   {
@@ -38,11 +39,12 @@ interface HomeScreenProps {
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const swipeHandlers = useSwipeBack({ onSwipeBack: () => setSelectedIndex(null) });
 
   if (selectedIndex !== null) {
     const benefit = benefitItems[selectedIndex];
     return (
-      <>
+      <div {...swipeHandlers}>
         <button
           onClick={() => setSelectedIndex(null)}
           style={{ display: 'flex', alignItems: 'center', gap: 6, border: 0, background: 'transparent', padding: 0, cursor: 'pointer', color: '#14346e' }}
@@ -69,7 +71,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
             </div>
           ))}
         </div>
-      </>
+      </div>
     );
   }
 

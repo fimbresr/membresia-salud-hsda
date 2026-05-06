@@ -13,6 +13,7 @@ import {
   Globe,
   MessageCircle,
 } from 'lucide-react';
+import { useSwipeBack } from '../hooks/useSwipeBack';
 
 interface ProfileSection {
   icon: typeof Bell;
@@ -70,11 +71,12 @@ const profileSections: ProfileSection[] = [
 
 const ProfileScreen: React.FC<{ onNavigate?: (tab: string) => void }> = ({ onNavigate }) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const swipeHandlers = useSwipeBack({ onSwipeBack: () => setSelectedIndex(null) });
 
   if (selectedIndex !== null) {
     const section = profileSections[selectedIndex];
     return (
-      <>
+      <div {...swipeHandlers}>
         <button
           onClick={() => setSelectedIndex(null)}
           style={{ display: 'flex', alignItems: 'center', gap: 6, border: 0, background: 'transparent', padding: 0, cursor: 'pointer', color: '#14346e' }}
@@ -106,7 +108,7 @@ const ProfileScreen: React.FC<{ onNavigate?: (tab: string) => void }> = ({ onNav
             </div>
           ))}
         </div>
-      </>
+      </div>
     );
   }
 
