@@ -3,12 +3,6 @@ import { motion } from 'framer-motion';
 import { QrCode, ShieldCheck, User } from 'lucide-react';
 
 interface DigitalCardProps {
-  userName: string;
-  memberId: string;
-  plan: 'Básico' | 'Plus' | 'Premium';
-  expiryDate: string;
-  status: 'Activa' | 'Vencida' | 'Suspendida';
-}
 
 export const DigitalCard: React.FC<DigitalCardProps> = ({
   userName,

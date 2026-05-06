@@ -1,5 +1,5 @@
 import React from 'react';
-import { DigitalCard } from './components/membership/DigitalCard';
+import { DigitalCard } from '../components/membership/DigitalCard';
 
 const Dashboard: React.FC = () => {
   return (
