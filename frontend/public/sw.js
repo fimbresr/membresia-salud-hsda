@@ -1,10 +1,11 @@
 const CACHE_NAME = 'hsda-card-v2';
 
 const ASSETS = [
-  '/membresia-salud-hsda/',
-  '/membresia-salud-hsda/index.html',
-  '/membresia-salud-hsda/icon-192x192.png',
-  '/membresia-salud-hsda/icon-512x512.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192x192.png',
+  './icon-512x512.png',
 ];
 
 self.addEventListener('install', (event) => {
