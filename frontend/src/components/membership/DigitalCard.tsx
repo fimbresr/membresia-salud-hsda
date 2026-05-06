@@ -6,12 +6,14 @@ import logo from '../../assets/logo.png';
 interface DigitalCardProps {
   userName: string;
   memberId: string;
+  plan?: string;
   status: 'Activa' | 'Inactiva';
 }
 
 export const DigitalCard: React.FC<DigitalCardProps> = ({
   userName,
   memberId,
+  plan = 'Plus',
   status,
 }) => {
   const isActive = status === 'Activa';
@@ -75,12 +77,7 @@ export const DigitalCard: React.FC<DigitalCardProps> = ({
         }}
       >
         <ShieldCheck size={11} />
-        <span
-          style={{
-            fontSize: 10,
-            fontFamily: '"Avenir Medium", sans-serif',
-          }}
-        >
+        <span style={{ fontSize: 10, fontFamily: '"Avenir Medium", sans-serif' }}>
           {status}
         </span>
       </div>
@@ -101,7 +98,7 @@ export const DigitalCard: React.FC<DigitalCardProps> = ({
             fontFamily: '"Avenir Medium", sans-serif',
           }}
         >
-          Membresía Plus
+          Membresía {plan}
         </p>
         <h2
           style={{

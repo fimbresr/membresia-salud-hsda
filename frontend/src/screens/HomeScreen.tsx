@@ -85,7 +85,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
       </div>
 
       <div style={{ marginTop: 18 }}>
-        <DigitalCard userName="Lucy Hernández" memberId="ID 1000 2345 6789" status="Activa" />
+        <DigitalCard userName="Lucy Hernández" memberId="ID 1000 2345 6789" plan="Premium" status="Activa" />
       </div>
 
       <section style={{ marginTop: 18, borderRadius: 24, border: '1px solid #eef1f6', background: '#ffffff', padding: '16px 18px', boxShadow: '0 4px 14px rgba(16, 50, 107, 0.05)' }}>

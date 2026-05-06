@@ -29,13 +29,12 @@
 :root {
   color: #11284d;
   font-family: 'Avenir Light', sans-serif;
-  background:
-    radial-gradient(circle at top, rgba(35, 97, 183, 0.12), transparent 26%),
-    linear-gradient(180deg, #f7faff 0%, #eff5ff 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 h1,
@@ -50,11 +49,25 @@ h3,
 }
 
 body {
+  margin: 0;
   color: #11284d;
   font-family: 'Avenir Light', sans-serif;
-  background:
-    radial-gradient(circle at top, rgba(35, 97, 183, 0.12), transparent 26%),
-    linear-gradient(180deg, #f7faff 0%, #eff5ff 100%);
+  background: #f6f7fb;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  min-height: 100dvh;
+  overscroll-behavior: none;
 }
 
 button,
@@ -62,4 +75,19 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@media (display-mode: standalone) {
+  body {
+    padding-top: var(--safe-top);
+  }
 }
