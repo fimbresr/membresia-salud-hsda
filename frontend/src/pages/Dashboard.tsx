@@ -10,6 +10,7 @@ import HomeScreen from '../screens/HomeScreen';
 import BenefitsScreen from '../screens/BenefitsScreen';
 import PurchasesScreen from '../screens/PurchasesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import type { MembershipExperienceData } from '../types/app';
 
 type TabKey = 'home' | 'benefits' | 'purchases' | 'profile';
 
@@ -26,31 +27,39 @@ const navItems: Array<{
 
 const pageVariants = {
   initial: { opacity: 0, x: 20 },
-  animate: { opacity: 1, x: 0, transition: { duration: 0.2, ease: 'easeOut' } },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.2 } },
   exit: { opacity: 0, x: -20, transition: { duration: 0.15 } },
 };
 
-const Dashboard: React.FC = () => {
+interface DashboardProps {
+  membershipExperience: MembershipExperienceData;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ membershipExperience }) => {
   const [activeTab, setActiveTab] = useState<TabKey>('home');
 
   const renderScreen = () => {
     switch (activeTab) {
       case 'benefits':
-        return <BenefitsScreen />;
+        return <BenefitsScreen membershipExperience={membershipExperience} />;
       case 'purchases':
         return <PurchasesScreen />;
       case 'profile':
-        return <ProfileScreen onNavigate={(tab) => setActiveTab(tab as TabKey)} />;
+        return <ProfileScreen membershipExperience={membershipExperience} />;
       case 'home':
       default:
-        return <HomeScreen onNavigate={(tab) => setActiveTab(tab as TabKey)} />;
+        return (
+          <HomeScreen
+            membershipExperience={membershipExperience}
+            onNavigate={(tab) => setActiveTab(tab as TabKey)}
+          />
+        );
     }
   };
 
   return (
     <main
       style={{
-        minHeight: '100vh',
         minHeight: '100dvh',
         padding: '16px 16px 0',
         paddingTop: 'max(16px, env(safe-area-inset-top))',

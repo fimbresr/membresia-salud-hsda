@@ -1,0 +1,356 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PATIENT
+  STAFF
+  ADMIN
+}
+
+enum AccountStatus {
+  PENDING_ACTIVATION
+  ACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  UNSPECIFIED
+}
+
+enum MembershipMode {
+  INDIVIDUAL
+  FAMILY
+  GROUP
+}
+
+enum MembershipViewMode {
+  INDIVIDUAL
+  FAMILY
+  GROUP
+}
+
+enum ApplicationStatus {
+  DRAFT
+  PENDING_VALIDATION
+  PENDING_PAYMENT
+  PENDING_CONFIRMATION
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum MembershipStatus {
+  PENDING_ACTIVATION
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+  CANCELLED
+}
+
+enum ActivationStatus {
+  PENDING
+  ACTIVATED
+  CANCELLED
+}
+
+enum ParticipantRole {
+  HOLDER
+  DEPENDENT
+}
+
+enum BenefitValueType {
+  TEXT
+  COUNT
+  PERCENTAGE
+  BOOLEAN
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  SETTLED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum CashbackEntryType {
+  EARN
+  REDEEM
+  ADJUSTMENT
+  EXPIRE
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum ExportTarget {
+  GOOGLE_SHEETS
+}
+
+enum ExportStatus {
+  PENDING
+  EXPORTED
+  FAILED
+}
+
+model Person {
+  id                  String                     @id @default(cuid())
+  fullName            String
+  birthDate           DateTime?
+  gender              Gender                     @default(UNSPECIFIED)
+  phone               String?
+  email               String?
+  createdAt           DateTime                   @default(now())
+  updatedAt           DateTime                   @updatedAt
+  userAccount         UserAccount?
+  identityDocuments   IdentityDocument[]
+  memberOfApplications ApplicationParticipant[]
+  memberOfMemberships MembershipParticipant[]
+  heldApplications    MembershipApplication[]    @relation("ApplicationHolder")
+  heldMemberships     Membership[]               @relation("MembershipHolder")
+}
+
+model UserAccount {
+  id           String        @id @default(cuid())
+  personId     String        @unique
+  email        String        @unique
+  passwordHash String?
+  role         UserRole      @default(PATIENT)
+  status       AccountStatus @default(PENDING_ACTIVATION)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  person       Person        @relation(fields: [personId], references: [id], onDelete: Cascade)
+  auditEvents  AuditEvent[]
+}
+
+model IdentityDocument {
+  id           String   @id @default(cuid())
+  personId     String
+  documentType String
+  reference    String?
+  fileName     String?
+  createdAt    DateTime @default(now())
+  person       Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+}
+
+model MembershipPlan {
+  id                    String                   @id @default(cuid())
+  code                  String                   @unique
+  name                  String
+  mode                  MembershipMode
+  description           String?
+  maxParticipants       Int
+  annualCheckups        Int                      @default(1)
+  durationMonths        Int                      @default(12)
+  basePriceCents        Int?
+  isActive              Boolean                  @default(true)
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+  benefits              PlanBenefit[]
+  applications          MembershipApplication[]
+  memberships           Membership[]
+  productDiscounts      PlanProductDiscount[]
+}
+
+model BenefitCatalog {
+  id               String         @id @default(cuid())
+  code             String         @unique
+  name             String
+  description      String?
+  valueType        BenefitValueType
+  sheetColumnKey   String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  planAssignments  PlanBenefit[]
+}
+
+model PlanBenefit {
+  id             String         @id @default(cuid())
+  planId         String
+  benefitId      String
+  valueText      String?
+  valueNumber    Decimal?
+  isHighlighted  Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  plan           MembershipPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  benefit        BenefitCatalog @relation(fields: [benefitId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, benefitId])
+}
+
+model MembershipApplication {
+  id                 String                   @id @default(cuid())
+  holderPersonId     String
+  planId             String
+  preferredView      MembershipViewMode
+  status             ApplicationStatus        @default(PENDING_VALIDATION)
+  notes              String?
+  termsAcceptedAt    DateTime?
+  submittedAt        DateTime                 @default(now())
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  holderPerson       Person                   @relation("ApplicationHolder", fields: [holderPersonId], references: [id], onDelete: Restrict)
+  plan               MembershipPlan           @relation(fields: [planId], references: [id], onDelete: Restrict)
+  participants       ApplicationParticipant[]
+  payments           PaymentTransaction[]
+  membership         Membership?
+  sheetExports       SheetExport[]
+}
+
+model ApplicationParticipant {
+  id             String                @id @default(cuid())
+  applicationId  String
+  personId       String
+  role           ParticipantRole
+  sortOrder      Int                   @default(0)
+  createdAt      DateTime              @default(now())
+  application    MembershipApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  person         Person                @relation(fields: [personId], references: [id], onDelete: Restrict)
+
+  @@unique([applicationId, personId])
+}
+
+model Membership {
+  id                String                    @id @default(cuid())
+  applicationId     String                    @unique
+  planId            String
+  holderPersonId    String
+  memberCode        String                    @unique
+  folioBase         String                    @unique
+  status            MembershipStatus          @default(PENDING_ACTIVATION)
+  activationStatus  ActivationStatus          @default(PENDING)
+  contractedAt      DateTime                  @default(now())
+  activatedAt       DateTime?
+  expiresAt         DateTime?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  application       MembershipApplication     @relation(fields: [applicationId], references: [id], onDelete: Restrict)
+  plan              MembershipPlan            @relation(fields: [planId], references: [id], onDelete: Restrict)
+  holderPerson      Person                    @relation("MembershipHolder", fields: [holderPersonId], references: [id], onDelete: Restrict)
+  participants      MembershipParticipant[]
+  payments          PaymentTransaction[]
+  cashbackAccount   CashbackAccount?
+  sheetExports      SheetExport[]
+}
+
+model MembershipParticipant {
+  id             String          @id @default(cuid())
+  membershipId   String
+  personId       String
+  role           ParticipantRole
+  sequence       Int             @default(0)
+  folioSuffix    String?
+  createdAt      DateTime        @default(now())
+  membership     Membership      @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  person         Person          @relation(fields: [personId], references: [id], onDelete: Restrict)
+
+  @@unique([membershipId, personId])
+}
+
+model PaymentTransaction {
+  id                 String                 @id @default(cuid())
+  applicationId      String?
+  membershipId       String?
+  amountCents        Int
+  currency           String                 @default("MXN")
+  status             PaymentStatus          @default(PENDING)
+  provider           String?
+  providerReference  String?
+  paidAt             DateTime?
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  application        MembershipApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  membership         Membership?            @relation(fields: [membershipId], references: [id], onDelete: SetNull)
+}
+
+model Product {
+  id              String                @id @default(cuid())
+  sku             String                @unique
+  name            String
+  description     String?
+  category        String?
+  isActive        Boolean               @default(true)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  discounts       PlanProductDiscount[]
+}
+
+model PlanProductDiscount {
+  id               String          @id @default(cuid())
+  planId           String
+  productId        String
+  discountType     DiscountType
+  discountValue    Decimal
+  notes            String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  plan             MembershipPlan  @relation(fields: [planId], references: [id], onDelete: Cascade)
+  product          Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, productId])
+}
+
+model CashbackAccount {
+  id                    String               @id @default(cuid())
+  membershipId          String               @unique
+  availableBalanceCents Int                  @default(0)
+  pendingBalanceCents   Int                  @default(0)
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  membership            Membership           @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  entries               CashbackEntry[]
+}
+
+model CashbackEntry {
+  id                 String            @id @default(cuid())
+  cashbackAccountId  String
+  productId          String?
+  paymentId          String?
+  entryType          CashbackEntryType
+  amountCents        Int
+  description        String?
+  createdAt          DateTime          @default(now())
+  cashbackAccount    CashbackAccount   @relation(fields: [cashbackAccountId], references: [id], onDelete: Cascade)
+}
+
+model SheetExport {
+  id                    String                 @id @default(cuid())
+  target                ExportTarget           @default(GOOGLE_SHEETS)
+  applicationId         String?
+  membershipId          String?
+  targetDocumentName    String?
+  targetSheetName       String?
+  status                ExportStatus           @default(PENDING)
+  payloadJson           Json
+  externalReference     String?
+  errorMessage          String?
+  exportedAt            DateTime?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  application           MembershipApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  membership            Membership?            @relation(fields: [membershipId], references: [id], onDelete: SetNull)
+}
+
+model AuditEvent {
+  id            String      @id @default(cuid())
+  actorUserId   String?
+  targetType    String
+  targetId      String
+  action        String
+  metadataJson  Json?
+  createdAt     DateTime    @default(now())
+  actorUser     UserAccount? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+}
